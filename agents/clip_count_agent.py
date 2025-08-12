@@ -87,4 +87,6 @@ class ClipCountAgent:
             heatmap_pred = heatmap_pred / heatmap_pred.max()
             heatmap_pred = (heatmap_pred * 255).astype(np.uint8)
 
-        return count, Image.fromarray(cv2.cvtColor(heatmap_pred, cv2.COLOR_BGR2RGB))
+        # return count, Image.fromarray(cv2.cvtColor(heatmap_pred, cv2.COLOR_BGR2RGB))
+        return f"[estimated count] {count}", Image.fromarray(cv2.cvtColor(heatmap_pred, cv2.COLOR_BGR2RGB))
+

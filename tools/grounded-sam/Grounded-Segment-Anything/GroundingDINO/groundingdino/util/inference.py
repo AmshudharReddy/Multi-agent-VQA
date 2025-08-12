@@ -90,6 +90,7 @@ def annotate(image_source: np.ndarray, boxes: torch.Tensor, logits: torch.Tensor
     boxes = boxes * torch.Tensor([w, h, w, h])
     xyxy = box_convert(boxes=boxes, in_fmt="cxcywh", out_fmt="xyxy").numpy()
     detections = sv.Detections(xyxy=xyxy)
+    detections.class_id = np.arange(len(detections.xyxy))  # or actual mapped IDs
 
     labels = [
         f"{phrase} {logit:.2f}"
@@ -99,7 +100,11 @@ def annotate(image_source: np.ndarray, boxes: torch.Tensor, logits: torch.Tensor
 
     box_annotator = sv.BoxAnnotator()
     annotated_frame = cv2.cvtColor(image_source, cv2.COLOR_RGB2BGR)
-    annotated_frame = box_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
+    annotated_frame = box_annotator.annotate(scene=annotated_frame, detections=detections)
+    for det, label in zip(detections, labels):
+            x_min, y_min, _, _ = map(int, det[0])
+            cv2.putText(annotated_frame, label, (x_min, max(y_min - 5, 0)),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
     return annotated_frame
 
 

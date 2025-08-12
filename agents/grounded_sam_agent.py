@@ -1,18 +1,78 @@
-# agents/grounded_sam_agent.py
+# grounded_sam_agent.py
+# Modified from grounded_sam_simple_demo.py in original Multi-Agent-VQA repo
 
 import cv2
 import numpy as np
 import supervision as sv
+import re
 import torch
 import torchvision
-import os
 import sys
+import os
+import matplotlib.pyplot as plt
 
-sys.path.append(os.path.join(os.getcwd(), "./tools/grounded-sam/Grounded-Segment-Anything"))
+sys.path.append('./tools/grounded-sam/Grounded-Segment-Anything')
 
-from GroundingDINO.groundingdino.util.inference import Model
-from segment_anything.segment_anything import sam_model_registry, SamPredictor
+from segment_anything.segment_anything import sam_model_registry, SamPredictor, SamAutomaticMaskGenerator
+from GroundingDINO.groundingdino.util.inference import load_model, load_image, predict
+from GroundingDINO.groundingdino.util.inference import annotate, Model
 
+def plot_grounding_dino_bboxes(image_source, boxes, logits, phrases, filename):
+    annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
+    annotated_frame = annotated_frame[:, :, [2, 1, 0]]  # BGR2RGB
+    plt.imsave('bboxes' + filename + '.jpg', annotated_frame)
+
+def query_grounding_dino(device, args, model, image_path, text_prompt="bear.", save_image=False):
+    """
+    Run GroundingDINO object detection given an image and text prompt.
+    """
+    image_source, image = load_image(image_path)
+
+    boxes, logits, phrases = predict(
+        model=model.to(device),
+        image=image,
+        caption=text_prompt,
+        box_threshold=args['dino']['BOX_THRESHOLD'],
+        text_threshold=args['dino']['TEXT_THRESHOLD'],
+        device=device
+    )
+
+    if save_image:
+        match = re.search(r'n(\d+)\.jpg', image_path)
+        filename = match.group(1) if match else "output"
+        print(f"Saving filename: {filename}")
+        plot_grounding_dino_bboxes(image_source, boxes, logits, phrases, filename)
+
+    # Convert boxes to absolute coordinates
+    h, w, _ = image_source.shape
+    boxes = boxes * torch.Tensor([w, h, w, h])
+
+    return image_source, boxes, logits, phrases
+
+def show_anns(anns):
+    if len(anns) == 0:
+        return
+    sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
+    # ax = plt.gca()
+    # ax.set_autoscale_on(False)
+
+    img = np.ones((sorted_anns[0]['segmentation'].shape[0], sorted_anns[0]['segmentation'].shape[1], 4))
+    img[:,:,3] = 0
+    for ann in sorted_anns:
+        m = ann['segmentation']
+        color_mask = np.concatenate([np.random.random(3), [0.35]])
+        img[m] = color_mask
+    # ax.imshow(img)
+    plt.imsave('masks.jpg', img)
+
+
+def query_sam(device, args, sam_mask_generator, image):
+    """
+    Generate segmentation masks for the entire image.
+    """
+    masks = sam_mask_generator.generate(image)
+    show_anns(masks)
+    return masks
 
 class GroundedSAMAgent:
     def __init__(self,
