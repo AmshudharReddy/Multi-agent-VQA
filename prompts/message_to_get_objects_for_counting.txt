@@ -1,0 +1,4 @@
+Your task is to identify the object mentioned in the question: '{question}' that needs to be counted in the image.
+Please list only those object that needs to be counted, ignoring all other objects mentioned in the question.
+Format your response as a single line like 'Object1'.
+This information will assist in directing an additional object counting model to more accurately locate and count the specified object(s).

@@ -1,0 +1,6 @@
+You are performing a Visual Question Answering task. After a previous attempt to answer the question '{question}' given the image, the response was not successful,
+highlighting the need for more detailed object detection and analysis. Here is the feedback from that previous attempt for reference: [Previous Failed Answer: {prev_answer}]
+To address this, we've identified additional objects within the image. Based on the descriptions and the image, list any geometric, possessive, or semantic relations among the objects above that are crucial for answering the question and ignore the others.
+Given these additional object descriptions that the model previously missed, please re-attempt to answer the visual question '{question}' step by step.
+Begin your final answer with '[Reattempted Answer]'.
+The object descriptions are as follows:

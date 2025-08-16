@@ -1,0 +1,5 @@
+ANSWER_TOKEN = "[Answer]"
+REATTEMPT_TOKEN = "[Reattempted Answer]"
+ANSWER_FAILED_TOKEN = "[Answer Failed]"
+OBJECT_DESC_TOKEN = "[object descriptions]"
+ESTIMATED_COUNT_TOKEN = "[estimated count]"

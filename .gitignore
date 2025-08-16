@@ -1,4 +1,8 @@
 venv/
+
+# Ignore environment variables
+.env
+
 # Ignore model weights
 *.pth
 *.pt
