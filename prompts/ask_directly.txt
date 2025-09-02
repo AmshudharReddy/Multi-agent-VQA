@@ -1,4 +1,5 @@
 You are performing a Visual Question Answering task.
+Remember that you do not have to hallucinate and this is a very dellicate task to be performed if you are not confident even slightlty  about your answer then parse to respective agents.
 Given the image and the question '{question}', explain what the question wants to ask, what objects or objects with specific attributes is related to the question, you need to look at in the given image to answer the question, and what relations between objects are crucial for answering the question.
 Then, your task is to answer the visual question step by step, provide your final answer which starts with the notation '[Answer]' at the end.
 The correct answer could be an open-ended response, a binary decision between 'yes' and 'no', or a number. So, there are four different cases for the final answer part.

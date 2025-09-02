@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent VQA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .header p {
+            text-align: center;
+            color: #718096;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            max-width: 100%;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.5rem;
+            word-wrap: break-word;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        .message.assistant .message-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom-left-radius: 0.5rem;
+        }
+
+        .uploaded-image {
+            max-width: 300px;
+            max-height: 200px;
+            border-radius: 0.75rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .input-container.focused {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .text-input-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 50px;
+            max-height: 150px;
+            padding: 1rem 3rem 1rem 1rem;
+            border: none;
+            background: transparent;
+            resize: none;
+            font-size: 1rem;
+            line-height: 1.5;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .text-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .file-input-container {
+            position: relative;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-button {
+            width: 45px;
+            height: 45px;
+            border: none;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .file-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-button svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .send-button {
+            width: 45px;
+            height: 45px;
+            border: none;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .send-button svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .preview-item {
+            position: relative;
+            display: inline-block;
+        }
+
+        .preview-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .remove-image {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .loading-dot {
+            width: 6px;
+            height: 6px;
+            background: #718096;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 60%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .welcome-screen {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+        }
+
+        .welcome-screen h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .welcome-screen p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            border: 1px solid #feb2b2;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .message-content {
+                max-width: 90%;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .input-wrapper {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Multi-Agent VQA</h1>
+        <p>Ask questions about images using advanced AI vision models</p>
+    </div>
+
+    <div class="main-container">
+        <div class="chat-container">
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-screen">
+                    <h2>Welcome to Multi-Agent VQA</h2>
+                    <p>Upload an image and ask any question about it. Our multi-agent system will analyze the image using specialized AI models to provide accurate answers.</p>
+                </div>
+            </div>
+
+            <div class="input-container" id="inputContainer">
+                <div class="input-wrapper">
+                    <div class="file-input-container">
+                        <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+                        <button class="file-button" onclick="document.getElementById('fileInput').click()">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="text-input-container">
+                        <textarea 
+                            id="textInput" 
+                            class="text-input" 
+                            placeholder="Ask a question about your image..."
+                            rows="1"
+                        ></textarea>
+                    </div>
+                    
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="image-preview" id="imagePreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedImages = [];
+        let isProcessing = false;
+
+        // Auto-resize textarea
+        const textInput = document.getElementById('textInput');
+        const inputContainer = document.getElementById('inputContainer');
+
+        textInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+
+        textInput.addEventListener('focus', function() {
+            inputContainer.classList.add('focused');
+        });
+
+        textInput.addEventListener('blur', function() {
+            inputContainer.classList.remove('focused');
+        });
+
+        // Handle Enter key
+        textInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Handle file selection
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedImages.push({
+                            file: file,
+                            dataUrl: e.target.result,
+                            name: file.name
+                        });
+                        updateImagePreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            e.target.value = ''; // Reset input
+        });
+
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            
+            uploadedImages.forEach((img, index) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                
+                previewItem.innerHTML = `
+                    <img src="${img.dataUrl}" alt="${img.name}" class="preview-image">
+                    <button class="remove-image" onclick="removeImage(${index})">×</button>
+                `;
+                
+                preview.appendChild(previewItem);
+            });
+        }
+
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            updateImagePreview();
+        }
+
+        function addMessage(content, type, imageData = null) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            // Remove welcome screen if it exists
+            const welcomeScreen = messagesContainer.querySelector('.welcome-screen');
+            if (welcomeScreen) {
+                welcomeScreen.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            if (type === 'user' && imageData) {
+                const img = document.createElement('img');
+                img.src = imageData.dataUrl;
+                img.alt = imageData.name;
+                img.className = 'uploaded-image';
+                messageContent.appendChild(img);
+            }
+            
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = content.replace(/\n/g, '<br>');
+            messageContent.appendChild(textDiv);
+            
+            messageDiv.appendChild(messageContent);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function addLoadingMessage() {
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message assistant';
+            messageDiv.id = 'loadingMessage';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content loading';
+            messageContent.innerHTML = `
+                <span>Analyzing image and generating response</span>
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+            `;
+            
+            messageDiv.appendChild(messageContent);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function removeLoadingMessage() {
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+        }
+
+        async function sendMessage() {
+            const question = textInput.value.trim();
+            
+            if (!question && uploadedImages.length === 0) {
+                return;
+            }
+
+            if (isProcessing) {
+                return;
+            }
+
+            isProcessing = true;
+            document.getElementById('sendButton').disabled = true;
+
+            // Add user message
+            let userContent = question || "Please analyze this image";
+            const imageToShow = uploadedImages.length > 0 ? uploadedImages[0] : null;
+            
+            addMessage(userContent, 'user', imageToShow);
+
+            // Clear input
+            textInput.value = '';
+            textInput.style.height = 'auto';
+
+            // Add loading message
+            addLoadingMessage();
+
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('question', question);
+                
+                if (uploadedImages.length > 0) {
+                    formData.append('image', uploadedImages[0].file);
+                }
+
+                // Make API call to your Python backend
+                const response = await fetch('/api/vqa', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                removeLoadingMessage();
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // Add assistant response
+                addMessage(result.answer || 'No response received', 'assistant');
+                
+                // If there's an output image, display it
+                if (result.output_image) {
+                    addMessage(`<img src="data:image/png;base64,${result.output_image}" style="max-width: 400px; border-radius: 0.75rem; margin-top: 0.5rem;">`, 'assistant');
+                }
+
+            } catch (error) {
+                removeLoadingMessage();
+                console.error('Error:', error);
+                
+                // Show demo response for now
+                const demoResponse = `I understand you want to analyze the image with the question "${question}". 
+                
+This is a demo interface for the Multi-Agent VQA system. In a production environment, this would:
+
+1. Send your image and question to the Python backend
+2. Run the multi-agent pipeline with specialized models
+3. Return the analysis result
+
+The system uses:
+• GPT-4V for initial visual analysis
+• Grounded Segment Everything for object detection
+• CLIP-Count for object counting
+• Multiple LLM agents for reasoning and grading
+
+To make this fully functional, you'll need to:
+• Set up a Flask/FastAPI backend
+• Configure the required model checkpoints
+• Set up API keys for the foundation models`;
+                
+                addMessage(demoResponse, 'assistant');
+            }
+
+            // Reset state
+            uploadedImages = [];
+            updateImagePreview();
+            isProcessing = false;
+            document.getElementById('sendButton').disabled = false;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            textInput.focus();
+        });
+    </script>
+</body>
+</html>

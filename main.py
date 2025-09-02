@@ -6,8 +6,8 @@ from pipeline import run_pipeline
 load_dotenv()
 
 # ===== USER INPUTS =====
-IMAGE_PATH = "C:\\Users\\amula\\Desktop\\107926.jpg"
-QUESTION = "What the man in the back doing?"
+IMAGE_PATH = "C:/Users/pra21/Desktop/101 apples/T/107926.jpg"
+QUESTION = "What the man in the back is doing?"
 
 # Read from .env
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
