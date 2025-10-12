@@ -12,34 +12,81 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #1a1a1a;
+            color: #f1f1f1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            color: #333;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
         }
 
         .header h1 {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #2d3748;
-            text-align: center;
+            color: #f1f1f1;
+            margin-bottom: 0.25rem;
         }
 
         .header p {
-            text-align: center;
-            color: #718096;
+            color: #999;
+            font-size: 0.875rem;
+        }
+
+        .mode-selector {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #999;
+            border-radius: 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .mode-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #f1f1f1;
+        }
+
+        .mode-button.active {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border-color: transparent;
+            color: white;
+        }
+
+        .mode-description {
             margin-top: 0.5rem;
-            font-size: 0.9rem;
+            color: #666;
+            font-size: 0.75rem;
+            min-height: 1rem;
         }
 
         .main-container {
@@ -49,29 +96,59 @@
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
-            padding: 2rem;
-        }
-
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
+            padding-top: 160px;
+            min-height: 100vh;
         }
 
         .messages-container {
             flex: 1;
+            padding: 1rem 2rem;
             overflow-y: auto;
-            padding: 1rem 0;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            padding-bottom: 140px;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 60vh;
+            opacity: 0.8;
+        }
+
+        .welcome-screen h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: #f1f1f1;
+        }
+
+        .welcome-screen p {
+            font-size: 1rem;
+            color: #999;
+            max-width: 500px;
+            line-height: 1.6;
         }
 
         .message {
             display: flex;
             gap: 1rem;
-            max-width: 100%;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.user {
@@ -83,54 +160,110 @@
         }
 
         .message-content {
-            max-width: 80%;
-            padding: 1.2rem 1.5rem;
-            border-radius: 1.5rem;
+            max-width: 85%;
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
             word-wrap: break-word;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            line-height: 1.5;
         }
 
         .message.user .message-content {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
             color: white;
-            border-bottom-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.25rem;
         }
 
         .message.assistant .message-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-bottom-left-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f1f1f1;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .agent-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            background: rgba(79, 70, 229, 0.2);
+            color: #a5b4fc;
+            border: 1px solid rgba(79, 70, 229, 0.3);
         }
 
         .uploaded-image {
-            max-width: 300px;
-            max-height: 200px;
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            max-height: 300px;
             border-radius: 0.75rem;
-            margin-top: 0.5rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .input-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: transparent;
+            padding: 1rem 0 2rem 0;
+            z-index: 1000;
         }
 
         .input-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 2rem;
-            padding: 1rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .input-container.focused {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
         .input-wrapper {
+            background: rgba(26, 26, 26, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 1.5rem;
             display: flex;
-            gap: 1rem;
             align-items: flex-end;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: rgba(79, 70, 229, 0.5);
+            background: rgba(26, 26, 26, 0.95);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(79, 70, 229, 0.2);
+        }
+
+        .attach-button {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            color: #f1f1f1;
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+
+        .attach-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .attach-button.has-image {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.2);
+            border-color: rgba(96, 165, 250, 0.5);
         }
 
         .text-input-container {
@@ -140,9 +273,9 @@
 
         .text-input {
             width: 100%;
-            min-height: 50px;
-            max-height: 150px;
-            padding: 1rem 3rem 1rem 1rem;
+            min-height: 40px;
+            max-height: 120px;
+            padding: 0.5rem 0;
             border: none;
             background: transparent;
             resize: none;
@@ -150,99 +283,67 @@
             line-height: 1.5;
             outline: none;
             font-family: inherit;
+            color: #f1f1f1;
+            overflow-y: auto;
         }
 
         .text-input::placeholder {
-            color: #a0aec0;
-        }
-
-        .file-input-container {
-            position: relative;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-button {
-            width: 45px;
-            height: 45px;
-            border: none;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .file-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .file-button svg {
-            width: 20px;
-            height: 20px;
-            color: white;
+            color: #666;
         }
 
         .send-button {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border: none;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s ease;
+            color: white;
+            flex-shrink: 0;
         }
 
         .send-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+            background: linear-gradient(135deg, #3730a3, #4338ca);
+            transform: scale(1.05);
         }
 
         .send-button:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
-        }
-
-        .send-button svg {
-            width: 20px;
-            height: 20px;
-            color: white;
+            transform: none;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .image-preview {
-            margin-top: 1rem;
             display: flex;
             gap: 0.5rem;
+            margin-bottom: 0.5rem;
             flex-wrap: wrap;
         }
 
         .preview-item {
             position: relative;
-            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
         }
 
         .preview-image {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 0.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 0.25rem;
             object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .remove-image {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -6px;
+            right: -6px;
             width: 20px;
             height: 20px;
             border-radius: 50%;
@@ -254,13 +355,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
         }
 
         .loading {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: #718096;
+            gap: 0.75rem;
+            color: #999;
         }
 
         .loading-dots {
@@ -269,9 +371,9 @@
         }
 
         .loading-dot {
-            width: 6px;
-            height: 6px;
-            background: #718096;
+            width: 4px;
+            height: 4px;
+            background: #666;
             border-radius: 50%;
             animation: pulse 1.5s infinite;
         }
@@ -295,98 +397,89 @@
             }
         }
 
-        .welcome-screen {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.9);
-            padding: 2rem;
+        .file-input {
+            display: none;
         }
 
-        .welcome-screen h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            font-weight: 300;
-        }
-
-        .welcome-screen p {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .error-message {
-            background: #fed7d7;
-            color: #c53030;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 0.5rem;
-            border: 1px solid #feb2b2;
-        }
-
-        /* Responsive design */
         @media (max-width: 768px) {
+            .header-content,
+            .input-container {
+                padding: 0 1rem;
+            }
+
+            .messages-container {
+                padding: 1rem;
+                padding-bottom: 120px;
+            }
+
+            .mode-selector {
+                gap: 0.25rem;
+            }
+
+            .mode-button {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
             .main-container {
-                padding: 1rem;
-            }
-
-            .message-content {
-                max-width: 90%;
-            }
-
-            .header {
-                padding: 1rem;
-            }
-
-            .input-wrapper {
-                gap: 0.5rem;
+                padding-top: 180px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Multi-Agent VQA</h1>
-        <p>Ask questions about images using advanced AI vision models</p>
+        <div class="header-content">
+            <h1>Multi-Agent VQA</h1>
+            <p>Ask questions about images using advanced AI vision models</p>
+            
+            <div class="mode-selector">
+                <button class="mode-button active" data-mode="auto" onclick="selectMode('auto')">Auto</button>
+                <button class="mode-button" data-mode="lvlm" onclick="selectMode('lvlm')">LVLM</button>
+                <button class="mode-button" data-mode="ocr" onclick="selectMode('ocr')">OCR</button>
+                <button class="mode-button" data-mode="clip_count" onclick="selectMode('clip_count')">CLIP-Count</button>
+                <button class="mode-button" data-mode="grounded_sam" onclick="selectMode('grounded_sam')">Grounded-SAM</button>
+            </div>
+            <div class="mode-description" id="modeDescription">Full pipeline with intelligent agent selection</div>
+        </div>
     </div>
 
     <div class="main-container">
-        <div class="chat-container">
-            <div class="messages-container" id="messagesContainer">
-                <div class="welcome-screen">
-                    <h2>Welcome to Multi-Agent VQA</h2>
-                    <p>Upload an image and ask any question about it. Our multi-agent system will analyze the image using specialized AI models to provide accurate answers.</p>
-                </div>
+        <div class="messages-container" id="messagesContainer">
+            <div class="welcome-screen">
+                <h2>Welcome to Multi-Agent VQA</h2>
+                <p>Upload an image and ask any question about it. Select a testing mode above to use specific agents directly.</p>
             </div>
+        </div>
+    </div>
 
-            <div class="input-container" id="inputContainer">
-                <div class="input-wrapper">
-                    <div class="file-input-container">
-                        <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
-                        <button class="file-button" onclick="document.getElementById('fileInput').click()">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="text-input-container">
-                        <textarea 
-                            id="textInput" 
-                            class="text-input" 
-                            placeholder="Ask a question about your image..."
-                            rows="1"
-                        ></textarea>
-                    </div>
-                    
-                    <button class="send-button" id="sendButton" onclick="sendMessage()">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                        </svg>
-                    </button>
+    <div class="input-section">
+        <div class="input-container">
+            <div class="image-preview" id="imagePreview"></div>
+            <div class="input-wrapper">
+                <input type="file" id="fileInput" class="file-input" accept="image/*,application/pdf">
+                <button class="attach-button" id="attachButton" onclick="document.getElementById('fileInput').click()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+                
+                <div class="text-input-container">
+                    <textarea 
+                        id="textInput" 
+                        class="text-input" 
+                        placeholder="Message Multi-Agent VQA..."
+                        rows="1"
+                    ></textarea>
                 </div>
                 
-                <div class="image-preview" id="imagePreview"></div>
+                <button class="send-button" id="sendButton" onclick="sendMessage()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 3 3 9-3 9 19-9Z"/>
+                        <path d="m6 12 13 0"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -394,25 +487,50 @@
     <script>
         let uploadedImages = [];
         let isProcessing = false;
+        let currentMode = 'auto';
 
-        // Auto-resize textarea
+        const modeDescriptions = {
+            'auto': 'Full pipeline with intelligent agent selection',
+            'lvlm': 'Direct large vision-language model testing',
+            'ocr': 'Direct OCR for text extraction from images/PDFs',
+            'clip_count': 'Direct counting using CLIP-Count model',
+            'grounded_sam': 'Direct object detection and segmentation'
+        };
+
+        const modePlaceholders = {
+            'auto': 'Ask any question about the image...',
+            'lvlm': 'Ask any question about the image...',
+            'ocr': 'Upload an image/PDF to extract text...',
+            'clip_count': 'How many [objects] are in the image?',
+            'grounded_sam': 'Detect [objects] in the image...'
+        };
+
         const textInput = document.getElementById('textInput');
-        const inputContainer = document.getElementById('inputContainer');
+        const attachButton = document.getElementById('attachButton');
+        const sendButton = document.getElementById('sendButton');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const fileInput = document.getElementById('fileInput');
+        const modeDescription = document.getElementById('modeDescription');
+
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            document.querySelectorAll('.mode-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+            modeDescription.textContent = modeDescriptions[mode];
+            textInput.placeholder = modePlaceholders[mode];
+        }
 
         textInput.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            updateSendButton();
         });
 
-        textInput.addEventListener('focus', function() {
-            inputContainer.classList.add('focused');
-        });
-
-        textInput.addEventListener('blur', function() {
-            inputContainer.classList.remove('focused');
-        });
-
-        // Handle Enter key
         textInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -420,11 +538,10 @@
             }
         });
 
-        // Handle file selection
-        document.getElementById('fileInput').addEventListener('change', function(e) {
+        fileInput.addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
             files.forEach(file => {
-                if (file.type.startsWith('image/')) {
+                if (file.type.startsWith('image/') || file.type === 'application/pdf') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         uploadedImages.push({
@@ -433,16 +550,16 @@
                             name: file.name
                         });
                         updateImagePreview();
+                        updateAttachButton();
                     };
                     reader.readAsDataURL(file);
                 }
             });
-            e.target.value = ''; // Reset input
+            e.target.value = '';
         });
 
         function updateImagePreview() {
-            const preview = document.getElementById('imagePreview');
-            preview.innerHTML = '';
+            imagePreview.innerHTML = '';
             
             uploadedImages.forEach((img, index) => {
                 const previewItem = document.createElement('div');
@@ -453,19 +570,50 @@
                     <button class="remove-image" onclick="removeImage(${index})">×</button>
                 `;
                 
-                preview.appendChild(previewItem);
+                imagePreview.appendChild(previewItem);
             });
         }
 
         function removeImage(index) {
             uploadedImages.splice(index, 1);
             updateImagePreview();
+            updateAttachButton();
         }
 
-        function addMessage(content, type, imageData = null) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            
-            // Remove welcome screen if it exists
+        function updateAttachButton() {
+            if (uploadedImages.length > 0) {
+                attachButton.classList.add('has-image');
+            } else {
+                attachButton.classList.remove('has-image');
+            }
+        }
+
+        function updateSendButton() {
+            const hasText = textInput.value.trim().length > 0;
+            const hasImage = uploadedImages.length > 0;
+            sendButton.disabled = isProcessing || !hasImage || (currentMode !== 'ocr' && !hasText);
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('messagesContainer');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+                
+                requestAnimationFrame(() => {
+                    container.scrollTop = container.scrollHeight;
+                    
+                    setTimeout(() => {
+                        container.scrollTop = container.scrollHeight;
+                        container.scrollTo({
+                            top: container.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }, 10);
+                });
+            }
+        }
+
+        function addMessage(content, type, imageData = null, agentInfo = null) {
             const welcomeScreen = messagesContainer.querySelector('.welcome-screen');
             if (welcomeScreen) {
                 welcomeScreen.remove();
@@ -477,6 +625,13 @@
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
             
+            if (agentInfo && type === 'assistant') {
+                const badge = document.createElement('div');
+                badge.className = 'agent-badge';
+                badge.textContent = `Agent: ${agentInfo}`;
+                messageContent.appendChild(badge);
+            }
+            
             if (type === 'user' && imageData) {
                 const img = document.createElement('img');
                 img.src = imageData.dataUrl;
@@ -485,20 +640,19 @@
                 messageContent.appendChild(img);
             }
             
-            const textDiv = document.createElement('div');
-            textDiv.innerHTML = content.replace(/\n/g, '<br>');
-            messageContent.appendChild(textDiv);
+            if (content) {
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = content.replace(/\n/g, '<br>');
+                messageContent.appendChild(textDiv);
+            }
             
             messageDiv.appendChild(messageContent);
             messagesContainer.appendChild(messageDiv);
             
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            scrollToBottom();
         }
 
         function addLoadingMessage() {
-            const messagesContainer = document.getElementById('messagesContainer');
-            
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message assistant';
             messageDiv.id = 'loadingMessage';
@@ -506,7 +660,7 @@
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content loading';
             messageContent.innerHTML = `
-                <span>Analyzing image and generating response</span>
+                <span>Processing with ${currentMode.toUpperCase()} agent...</span>
                 <div class="loading-dots">
                     <div class="loading-dot"></div>
                     <div class="loading-dot"></div>
@@ -516,7 +670,8 @@
             
             messageDiv.appendChild(messageContent);
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            scrollToBottom();
         }
 
         function removeLoadingMessage() {
@@ -526,11 +681,30 @@
             }
         }
 
+        function clearInputs() {
+            textInput.value = '';
+            textInput.style.height = 'auto';
+            uploadedImages = [];
+            updateImagePreview();
+            updateAttachButton();
+            fileInput.value = '';
+        }
+
         async function sendMessage() {
-            const question = textInput.value.trim();
+            let question = textInput.value.trim();
             
-            if (!question && uploadedImages.length === 0) {
+            if (uploadedImages.length === 0) {
+                alert('Please upload an image first');
                 return;
+            }
+
+            if (!question && currentMode !== 'ocr') {
+                alert('Please enter a question');
+                return;
+            }
+
+            if (currentMode === 'ocr' && !question) {
+                question = 'Extract all text from this image';
             }
 
             if (isProcessing) {
@@ -538,31 +712,21 @@
             }
 
             isProcessing = true;
-            document.getElementById('sendButton').disabled = true;
+            updateSendButton();
 
-            // Add user message
-            let userContent = question || "Please analyze this image";
-            const imageToShow = uploadedImages.length > 0 ? uploadedImages[0] : null;
+            const userContent = question;
+            const imageToShow = uploadedImages[0];
             
             addMessage(userContent, 'user', imageToShow);
-
-            // Clear input
-            textInput.value = '';
-            textInput.style.height = 'auto';
-
-            // Add loading message
+            clearInputs();
             addLoadingMessage();
 
             try {
-                // Prepare form data
                 const formData = new FormData();
                 formData.append('question', question);
-                
-                if (uploadedImages.length > 0) {
-                    formData.append('image', uploadedImages[0].file);
-                }
+                formData.append('image', imageToShow.file);
+                formData.append('mode', currentMode);
 
-                // Make API call to your Python backend
                 const response = await fetch('/api/vqa', {
                     method: 'POST',
                     body: formData
@@ -571,57 +735,44 @@
                 removeLoadingMessage();
 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `Server error: ${response.status}`);
                 }
 
                 const result = await response.json();
                 
-                // Add assistant response
-                addMessage(result.answer || 'No response received', 'assistant');
+                addMessage(result.answer || 'No response received', 'assistant', null, result.agent || currentMode);
                 
-                // If there's an output image, display it
                 if (result.output_image) {
                     addMessage(`<img src="data:image/png;base64,${result.output_image}" style="max-width: 400px; border-radius: 0.75rem; margin-top: 0.5rem;">`, 'assistant');
                 }
 
+                setTimeout(() => {
+                    scrollToBottom();
+                }, 200);
+
             } catch (error) {
                 removeLoadingMessage();
                 console.error('Error:', error);
+                addMessage(`Error: ${error.message}`, 'assistant');
                 
-                // Show demo response for now
-                const demoResponse = `I understand you want to analyze the image with the question "${question}". 
-                
-This is a demo interface for the Multi-Agent VQA system. In a production environment, this would:
-
-1. Send your image and question to the Python backend
-2. Run the multi-agent pipeline with specialized models
-3. Return the analysis result
-
-The system uses:
-• GPT-4V for initial visual analysis
-• Grounded Segment Everything for object detection
-• CLIP-Count for object counting
-• Multiple LLM agents for reasoning and grading
-
-To make this fully functional, you'll need to:
-• Set up a Flask/FastAPI backend
-• Configure the required model checkpoints
-• Set up API keys for the foundation models`;
-                
-                addMessage(demoResponse, 'assistant');
+                setTimeout(() => {
+                    scrollToBottom();
+                }, 200);
             }
 
-            // Reset state
-            uploadedImages = [];
-            updateImagePreview();
             isProcessing = false;
-            document.getElementById('sendButton').disabled = false;
+            updateSendButton();
+            textInput.focus();
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             textInput.focus();
+            updateSendButton();
         });
+
+        textInput.addEventListener('input', updateSendButton);
+        fileInput.addEventListener('change', updateSendButton);
     </script>
 </body>
 </html>
